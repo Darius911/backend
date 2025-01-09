@@ -30,13 +30,24 @@ app.get("/api/v1/mult/:num1/:num2", (req, res) =>{
     const num1 = parseInt(req.params.num1);
     const num2 = parseInt(req.params.num2);
     const  multiplication = (num1 * num2);
-    res.send(`${ multiplication}`)
+    // res.send(`${ multiplication}`)
+    res.status(200).json({
+        status: "success",
+        data: multiplication,
+    });
 });
 
 app.get("/api/v1/div/:num1/:num2", (req, res) =>{
     const num1 = parseInt(req.params.num1);
     const num2 = parseInt(req.params.num2);
     const division = (num1 / num2);
+    if ((num2) === 0){
+       return res.status(404).json({
+        status: "error",
+        message:"Dalyba is nulio negalima",
+       });
+        
+    }
     res.send(`${division}`)
 });
 
