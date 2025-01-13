@@ -40,13 +40,35 @@ exports.postTour = async (tour) => {
 
 
 
+// exports.update = async (id, tour) => {
+//     const columns = Object.keys(tour);
+
+//     const newTours = await sql `
+//     update tours set ${sql(tour, columns)}
+//     where tours.id = ${id}
+//     RETURNING *
+//     `;
+//     return newTours[0]
+// };
 exports.update = async (id, tour) => {
     const columns = Object.keys(tour);
-
-    const newTours = await sql `
-    update tours set ${sql(tour, columns)}
-    where tours.id = ${id}
-    RETURNING *
+    const values = Object.values(tour);
+  
+    const newTours = await sql`
+      UPDATE tours
+      SET ${sql(columns, values)}
+      WHERE id = ${id}
+      RETURNING *;
     `;
-    return newTours[0]
-};
+  
+    return newTours[0];
+  };
+
+  exports.deleteTour = async (id) => {
+    const deletedTours = await sql`
+      DELETE FROM tours
+      WHERE id = ${id}
+      RETURNING *;
+    `;
+    return deletedTours[0];
+  };
