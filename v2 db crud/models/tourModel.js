@@ -51,19 +51,20 @@ exports.getTourById = async (id) => {
   return tours[0];
 };
 
-exports.postTour = async ({
-  name,
-  description,
-  category,
-  price,
-  duration,
-  difficulty,
-}) => {
-  const tours = await sql`
-  INSERT INTO tours (name, description, category, price, duration, difficulty)
-  VALUES (${name}, ${description}, ${category}, ${price}, ${duration}, ${difficulty} )
-  RETURNING *`;
-  return tours[0];
+exports.postTour = async (tour) => {
+  const columns = [ 
+      'name',
+      'description',
+      'price',
+      'duration',
+      'category_id',
+      'difficulty_id'
+  ]
+const insertedTour =
+  await sql` 
+  INSERT INTO tours ${sql(tour, columns)}
+  RETURNING*`;
+return insertedTour[0];
 };
 
 exports.deleteTour = async (id) => {
