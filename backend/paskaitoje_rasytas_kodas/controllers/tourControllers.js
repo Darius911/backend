@@ -1,5 +1,5 @@
-const { getAllTours, getTourById, postTour, update, deleteTour } = require("../models/tourModel");
-
+const { getAllTours, getTourById, postTour, update, deleteTour, getToursByCat,countToursByCat, filterTours } = require("../models/tourModel");
+// is tour models
 exports.getAllTours = async (req, res) => {
   try {
     const tours = await getAllTours();
@@ -14,6 +14,35 @@ exports.getAllTours = async (req, res) => {
     });
   }
 };
+
+exports.getToursByCategotyId = async (req, res) => {
+  try{ 
+  const {categoryid} = req.params;
+  if(!categoryid || isNaN(categoryid)){
+  return res.status(400).json({
+    status :"Fail",
+    message: "Invalid or missing ID"
+  });
+}
+
+const tours = await getToursByCat(categoryid);
+res.status(200).json({
+  status: "success",
+  data : tours
+});
+  } catch (error) {
+    res.status(500).json({
+      status : "fail",
+      message : error.message,
+    });
+  }
+};
+
+
+
+
+
+
 
 exports.getTour = async (req, res) => {
   try {
@@ -111,5 +140,33 @@ exports.deleteTour = async (req, res) => {
   }
 };
 
+exports.getToursCountByCategory = async (req, res) => {
+  try {
+    const tours = await countToursByCat();
+    res.status(200).json({
+      status: "success",
+      CountedTours: tours
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: "failed",
+      message: err.message
+    });
+  }
+};
+
+exports.getFilteredTours = async (req, res) => {
+  try {
+    const filter = req.query;
+    const filteredTours = filterTours(filter)
+    console.log(filteredTours);
+    
+  } catch (error) {
+    res.status(500).json({
+      status: "failed",
+      message: err.message
+    });
+  }
+}
 
 
