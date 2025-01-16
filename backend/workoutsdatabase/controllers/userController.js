@@ -55,7 +55,7 @@ exports.postUser = async (req, res) =>{
        
         res.status(200).json({
           status: "success",
-          data: {...newUser,created_at: new Date().toISOString()},
+          data: newUser
           
         });
       } catch (error) {
@@ -76,7 +76,7 @@ exports.updateUser = async (req, res) => {
     console.log(updateUser);
     res.status(200).json({
       status: "success",
-      data: {...updateUser, updated_at: new Date().toISOString()},
+      data: updateUser,
       
     });
   } catch (error) {

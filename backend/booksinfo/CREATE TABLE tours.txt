@@ -1,0 +1,49 @@
+CREATE TABLE tours(
+id SERIAL PRIMARY KEY
+name VARCHAR(255) NOT NULL,
+description TEXT,
+category VARCHAR (255),
+price NUMERIC (10,2) NOT NULL,
+duration INTEGER,
+difficulty VARCHAR(255)
+)
+
+INSERT INTO tour (name, description, category, price, duration, difficulty)
+VALUES
+-- Tour 1
+('Mountain Adventure', 'A thrilling hike through scenic mountain trails.', 'Adventure', 299.99, 5, 'Hard'),
+-- Tour 2
+('City Highlights', 'Discover the landmarks and history of the city.', 'Cultural', 199.99, 2, 'Easy'),
+-- Tour 3
+('Safari Experience', 'Witness the wildlife in their natural habitat.', 'Wildlife', 1499.99, 7, 'Medium'),
+-- Tour 4
+('Cultural Journey', 'Explore the rich cultural heritage of the region.', 'Cultural', 799.99, 6, 'Easy'),
+-- Tour 5
+('Beach Getaway', 'Relax and unwind at pristine beaches.', 'Relaxation', 2499.99, 10, 'Easy'),
+-- Tour 6
+('Wine Tasting Tour', 'Sample the finest wines from local vineyards.', 'Culinary', 499.99, 3, 'Easy'),
+-- Tour 7
+('Island Adventure', 'Experience adventure and beauty on the island.', 'Adventure', 1299.99, 5, 'Medium'),
+-- Tour 8
+('Historical Expedition', 'Step back in time and visit historical landmarks.', 'Historical', 999.99, 7, 'Medium'),
+-- Tour 9
+('Underwater Safari', 'Dive into an underwater paradise and explore marine life.', 'Water-Based', 1999.99, 5, 'Hard'),
+-- Tour 10
+('Autumn Foliage Tour', 'Admire the breathtaking autumn colors.', 'Seasonal', 349.99, 4, 'Easy');
+
+has context menu
+
+ALTER TABLE tours
+ADD COLUMN category_id INT ,
+ADD CONSTRAINT fk_category
+FOREIGN KEY (category_id) REFERENCES categories (id)
+
+ON DELETE CASCADE
+
+
+http://localhost:3001/api/v1/tours/filter?duration=5&difficulty=Hard&price=299.99
+
+http://localhost:3005/api/v1/books/filter?author=F. Scott Fitzgerald&year=1938&genre=Fiction&sort=ASC
+
+http://localhost:3005/api/v1/books/filter?author=F. Scott Fitzgerald&year=1950&genre=Fiction&sort=ASC&limit=2&page=1
+
