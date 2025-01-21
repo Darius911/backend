@@ -7,16 +7,17 @@ const { getAllTours, getTourById, createTour, updateTour, getFilteredTours,postN
   tourControler;
 
 //middleware for specific route, only for delete
-const midlewareForDeleteRoute = (req, res, next) => {
-  console.log('Hello from the middleware for delete route');
-  next();
-};
+// const midlewareForDeleteRoute = (req, res, next) => {
+//   console.log('Hello from the middleware for delete route');
+//   next();
+// };
 
 // sukuriame ir pervardiname tourRouter tiesiog į router
 const router = express.Router();
 
 // deklaruojame, aprašome tour routes, svarbi routs eilės tvarka
-router.route('/').get(paginationValidator,validate, getAllTours).post(createTour,postNewTour); // General base route
+// paginationValidator,validate,
+router.route('/').get(getAllTours).post(createTour,postNewTour); // General base route
 router.route('/filter').get(filterValidator, validate,getFilteredTours);
 
 router.route('/category/:category/difficulty/:difficulty'); // Specific route for category and difficulty

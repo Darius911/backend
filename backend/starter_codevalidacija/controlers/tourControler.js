@@ -1,3 +1,5 @@
+const AppError = require('../utils/appError');
+
 const {
   getAllTours,
   getTourById,
@@ -9,7 +11,7 @@ const {
 
 
 //2. pagination and validation
-exports.getAllTours = async (req, res) => {
+exports.getAllTours = async (req, res, next) => {
   try {
     let { page, limit } = req.query;
 
@@ -21,20 +23,13 @@ exports.getAllTours = async (req, res) => {
     const offset = (page - 1) * limit;
 
     // Validate inputs (optional but recommended)
-    if (page < 1 || limit < 1) {
-      return res.status(400).json({ error: 'Invalid page or limit value' });
-    }
-
+   
     //get paginated tours
     const { tours, totalCount } = await getAllTours(limit, offset);
 
     if (!tours.length === 0) {
-      res.status(404).json({
-        status: 'fail',
-        message: 'No tours found',
-      });
-      return;
-    }
+      throw new AppError('No tours found', 404);
+    };
 
     // response format is JSend
     res.status(200).json({
@@ -50,12 +45,12 @@ exports.getAllTours = async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).send(error.message);
+    next(error);
   }
 };
 
 //3. filter tours using query string
-exports.getFilteredTours = async (req, res) => {
+exports.getFilteredTours = async (req, res, next) => {
   try {
     const filter = req.query;
     console.log(filter);
@@ -108,12 +103,12 @@ exports.getFilteredTours = async (req, res) => {
       data: filteredTours,
     });
   } catch (error) {
-    res.status(500).send(error.message);
+    next(error);
   }
 };
 
 // 4. get tour by id
-exports.getTourById = async (req, res) => {
+exports.getTourById = async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -133,12 +128,12 @@ exports.getTourById = async (req, res) => {
       data: tour,
     });
   } catch (error) {
-    res.status(500).send(error.message);
+    next(error);
   }
 };
 
 // 8. post tour
-exports.createTour = async (req, res) => {
+exports.createTour = async (req, res, next) => {
   try {
     const newTour = req.body;
 
@@ -158,12 +153,12 @@ exports.createTour = async (req, res) => {
       data: createdTour,
     });
   } catch (error) {
-    res.status(500).send(error.message);
+    next(error);
   }
 };
 
 // 9. update tour, method put
-exports.updateTour = async (req, res) => {
+exports.updateTour = async (req, res, next) => {
   try {
     // id nurodo kurį tour keičiame
     const id = req.params.id;
@@ -194,7 +189,7 @@ exports.updateTour = async (req, res) => {
       data: updatedTour,
     });
   } catch {
-    res.status(500).send(error.message);
+    next(error);
   }
 };
 

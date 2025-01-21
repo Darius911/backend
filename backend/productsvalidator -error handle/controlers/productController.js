@@ -4,7 +4,7 @@ const {filterProducts } = require("../models/productModel");
 
 
 
-exports.getFilteredProducts = async (req, res) => {
+exports.getFilteredProducts = async (req, res, next) => {
   try {
     const filter = req.query;
     
@@ -19,22 +19,14 @@ exports.getFilteredProducts = async (req, res) => {
       return;
     }
     if (filter.price === 0) {
-      return res.status(404).json({
-        status: "fail",
-        message: "Product not found",
-      });
+      throw new AppError("Invalid price", 400);
     }
 
     // Validate filter fields
     const allowedFields = ["name", "price", "category", "sort"];
     for (const key of Object.keys(filter)) {
       if (!allowedFields.includes(key)) {
-        return res.status(400).json({
-          status: "fail",
-          message: `Invalid filter field: '${key}'. Allowed fields are: ${allowedFields.join(
-            ", "
-          )}`,
-        });
+        throw new AppError("Invalid filter field", 400);
       }
     }
 //kodas kad nerodytu tuscio masyvo  jai nera filtre
@@ -52,6 +44,6 @@ exports.getFilteredProducts = async (req, res) => {
       status: "success", 
       data: filteredProducts });
   } catch (error) {
-    res.status(500).send(error.message);
+    next(error);
   }
 };
