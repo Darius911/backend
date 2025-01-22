@@ -1,10 +1,10 @@
 const express = require('express');
 const userControler = require('../controlers/userController');
 
-const registerUserValidate = require("../validators/validateUsers");
+const validateNewUser = require("../validators/validateUsers");
 const getUserByIdValidate = require("../validators/validateGetUserById")
 const validate = require("../validators/validate");
-const {createUser, getUserById} =
+const {getUserById, singup} =
   userControler;
 
 
@@ -13,7 +13,7 @@ const {createUser, getUserById} =
 const router = express.Router();
 
 // deklaruojame, aprašome tour routes, svarbi routs eilės tvarka
-router.route('/register').post(registerUserValidate, validate,createUser); 
+router.route('/register').post(validateNewUser, validate,singup); 
 
 router.route('/:id').get(getUserByIdValidate, validate,getUserById);
 
