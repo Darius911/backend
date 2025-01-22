@@ -48,9 +48,9 @@ exports.filterTours = async (filter) => {
 
 exports.getTourById = async (id) => {
   const tours = await sql`
-  SELECT tours.*
+  SELECT tours.*, difficulty.name as difficulty 
     FROM tours
-    
+    JOIN difficulty ON tours.difficulty = difficulty.id
     WHERE tours.id = ${id};
     `;
   return tours[0]; //tour is an array, so we need to return the first element

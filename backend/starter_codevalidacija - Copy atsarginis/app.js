@@ -2,7 +2,6 @@
 
 const express = require('express');
 const tourRouter = require('./routes/tourRoutes');
-const userRouter = require('./routes/userRoutes');
 const errorHandler = require('./middlewares/errorHandler');
 const AppError = require('./utils/appError');
 // create server
@@ -28,7 +27,6 @@ app.use((req, res, next) => {
 // ROUTES
 //naudojame tourRouter, procesas vadinasi "mounting the router"
 app.use('/api/v1/tours', tourRouter);
-app.use('/api/v1/users', userRouter);
 
 app.all('*', (req, res, next) => {
   // const error = new Error("Not found");
