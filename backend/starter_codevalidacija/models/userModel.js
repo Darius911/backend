@@ -16,3 +16,12 @@ WHERE users.email = ${email}
 `;
 return users[0];
 };
+
+exports.getUserById = async (id) => {
+const users = await sql`
+SELECT users.* 
+FROM users 
+WHERE users.id = ${id}
+`;
+return users[0];
+}

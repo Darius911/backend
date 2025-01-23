@@ -1,9 +1,12 @@
+const {createUser, getUserById, } = require('../models/userModel');
+
+
+
 //importuojame argon2 hasheri
 const argon2 = require('argon2');
-const {createUser, getUserByEmail, getUserById} = require('../models/userModel');
+
 // const AppError = require('../utils/appError');
 const jwt = require('jsonwebtoken');
-const AppError = require('../utils/appError');
 
 const signToken = (id) => {
     const token = jwt.sign({ id }, process.env. JWT_SECRET, {
@@ -18,7 +21,6 @@ const sendCookie = (token, res) => {
         expires : new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000),
         httpOnly: true, //cokio nesimatys narsykleje ir bus pasleptas ir ji matys tik uzklausa
     };
-    //jwt cookie vardas
     res.cookie('jwt', cookieOptions, token,);
 };
 
@@ -58,50 +60,33 @@ exports.singup = async (req, res, next) => {
         
 
     } catch (error) {
-        next(error);
+       next(error);
     }
 };
 
-exports.login = async (req, res, next) => {
-    try {
-        const {email} = req.body;    
-        const user = await getUserByEmail(email);
-        const token = signToken(user.id);
-        sendCookie(token, res);
-        
-        
-        user.password = undefined;
-        user.id = undefined;
 
-        res.status(200).json({
-            status: 'success',
-            data: user,
-        });
-    } catch (error) {
-        next(error);
+exports.getUserById = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+console.log(id);
+
+    const user = await getUserById(id);
+
+    if (!user) {
+      res.status(404).json({
+        status: 'fail',
+        message: 'Invalid id, user not found',
+      });
+      return;
     }
-    };
 
-    //neregistruotiems useriam neleis daryti kazko daryti protect middleware
-
-    exports.protect = async (req, res, next) => {
-        try {
-           //cokies parseris
-           const token = req.cookies?.jwt;
-
-           if (!token) {
-            throw new AppError('You are not logged in, Please login to get access', 401);
-           }
-
-           //verifikuojame tokenu su process.env.JWT_SECRET
-           const decoded = jwt.verify(token, process.env.JWT_SECRET);
-           const currentUser = await getUserById(decoded.id);
-
-           if(!currentUser) throw new AppError('User belongingt to this token no longer exist');
-           
-           req.user = currentUser;
-           next();
-        } catch (error) {
-            next(error);
-        }
-    }
+    res.status(200).json({
+      status: 'success',
+      data: user,
+      message: 'User details retrieved successfully',
+    });
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};

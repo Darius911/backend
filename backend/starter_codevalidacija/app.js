@@ -5,11 +5,17 @@ const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const errorHandler = require('./middlewares/errorHandler');
 const AppError = require('./utils/appError');
+
+const cookieParser = require('cookie-parser');
 // create server
 const app = express();
 
 // Middleware, that only parses json and only looks at requests where the Content-Type header matches the type option.
 app.use(express.json());
+
+
+//middleware for parsing cookies
+app.use(cookieParser());
 
 //our custom middlewares, working for any request
 app.use((req, res, next) => {
