@@ -16,7 +16,7 @@ const signToken = (id) => {
 };
 
 //cookies sukurimas
-const sendCookie = (token, res) => {
+exports.sendCookie = (token, res) => {
   const cookieOptions = {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
