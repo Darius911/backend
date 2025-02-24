@@ -1,0 +1,105 @@
+Duomenų bazės struktūra:
+Users – vartotojų informacija:
+
+id (unikalus identifikatorius)
+name (vardas)
+email (elektroninio pašto adresas)
+password (slaptažodis)
+role (vartotojo rolė, pvz., "admin" arba "user")
+created_at (registracijos data)
+updated_at (paskutinio atnaujinimo data)
+Tours – ekskursijų informacija:
+
+id (unikalus identifikatorius)
+title (eksursijos pavadinimas)
+description (trumpas aprašymas)
+image_url (nuotraukos nuoroda)
+duration (trukmė, pvz., "2 valandos")
+price (kaina)
+category (kategorija: pavieniams asmenims arba grupėms)
+created_by (nuoroda į vartotoją, kuris sukūrė ekskursiją, t.y., administratorius)
+created_at (sukūrimo data)
+updated_at (paskutinio atnaujinimo data)
+Tour_Dates – ekskursijų datos:
+
+id (unikalus identifikatorius)
+tour_id (nuoroda į ekskursiją iš Tours lentelės)
+date (eksursijos data)
+available_spots (laisvų vietų skaičius)
+created_at (data, kada buvo sukurta)
+Bookings – užsirašymų į ekskursijas informacija:
+
+id (unikalus identifikatorius)
+user_id (nuoroda į vartotoją, kuris užsirašė)
+tour_date_id (nuoroda į konkretų ekskursijos datą iš Tour_Dates lentelės)
+status (užrašymo būsena: "užsirašytas", "atšauktas", "patvirtintas")
+created_at (data, kada buvo atliktas užrašymas)
+updated_at (paskutinio atnaujinimo data)
+Reviews – ekskursijų vertinimai ir atsiliepimai:
+
+id (unikalus identifikatorius)
+user_id (nuoroda į vartotoją, kuris paliko vertinimą)
+tour_id (nuoroda į ekskursiją, kuri buvo įvertinta)
+rating (vertinimas nuo 1 iki 5)
+comment (komentaras)
+created_at (data, kada buvo paliktas vertinimas)
+Ryšiai tarp lentelių:
+Users -> Bookings: Kiekvienas vartotojas gali turėti kelis užrašymus (1:N ryšys).
+Tours -> Tour_Dates: Kiekviena ekskursija turi keletą galimų datų (1:N ryšys).
+Tour_Dates -> Bookings: Kiekviena ekskursijos data turi kelis užrašymus (1:N ryšys).
+Tours -> Reviews: Kiekviena ekskursija gali turėti kelis vertinimus (1:N ryšys).
+Users -> Reviews: Kiekvienas vartotojas gali palikti kelis vertinimus (1:N ryšys).
+
+-- Sukuriame lentelę vartotojams (Users)
+CREATE TABLE Users (
+    id SERIAL PRIMARY KEY, -- Unikalus identifikatorius
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(50) NOT NULL CHECK (role IN ('admin', 'user')), -- Rolė: admin arba user
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Sukuriame lentelę ekskursijoms (Tours)
+CREATE TABLE Tours (
+    id SERIAL PRIMARY KEY, -- Unikalus identifikatorius
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    image_url VARCHAR(255),
+    duration VARCHAR(100),
+    price DECIMAL(10, 2),
+    category VARCHAR(50) CHECK (category IN ('pavieniams asmenims', 'grupėms')), -- Kategorija
+    created_by INTEGER REFERENCES Users(id) ON DELETE SET NULL, -- Administratorius
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Sukuriame lentelę ekskursijų datoms (Tour_Dates)
+CREATE TABLE Tour_Dates (
+    id SERIAL PRIMARY KEY, -- Unikalus identifikatorius
+    tour_id INTEGER REFERENCES Tours(id) ON DELETE CASCADE, -- Nuoroda į ekskursiją
+    date DATE NOT NULL, -- Data
+    available_spots INTEGER NOT NULL, -- Laisvų vietų skaičius
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Sukuriame lentelę užrašymams į ekskursijas (Bookings)
+CREATE TABLE Bookings (
+    id SERIAL PRIMARY KEY, -- Unikalus identifikatorius
+    user_id INTEGER REFERENCES Users(id) ON DELETE CASCADE, -- Nuoroda į vartotoją
+    tour_date_id INTEGER REFERENCES Tour_Dates(id) ON DELETE CASCADE, -- Nuoroda į ekskursijos datą
+    status VARCHAR(50) CHECK (status IN ('užsirašytas', 'atšauktas', 'patvirtintas')), -- Užrašymo būsena
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Sukuriame lentelę vertinimams ir atsiliepimams (Reviews)
+CREATE TABLE Reviews (
+    id SERIAL PRIMARY KEY, -- Unikalus identifikatorius
+    user_id INTEGER REFERENCES Users(id) ON DELETE CASCADE, -- Nuoroda į vartotoją
+    tour_id INTEGER REFERENCES Tours(id) ON DELETE CASCADE, -- Nuoroda į ekskursiją
+    rating INTEGER CHECK (rating >= 1 AND rating <= 5), -- Vertinimas nuo 1 iki 5
+    comment TEXT, -- Komentaras
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
